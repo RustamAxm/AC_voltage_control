@@ -10,7 +10,7 @@
 
 class ZMPT101B {
 public:
-	ZMPT101B(uint8_t _pin);
+	ZMPT101B(uint8_t _pin, float a, float b);
 	int calibrate();
 	void setZeroPoint(int _zero);
 	void setSensitivity(float sens);
@@ -22,6 +22,8 @@ private:
 	int zero = 512;
 	float sensitivity;
 	uint8_t pin;
+  float a_ = 0.0;
+  float b_ = 0.0;
 };
 
 #endif

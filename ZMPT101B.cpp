@@ -1,8 +1,10 @@
 #include "ZMPT101B.h"
 
-ZMPT101B::ZMPT101B(uint8_t _pin) {
+ZMPT101B::ZMPT101B(uint8_t _pin, float a, float b) {
 	pin = _pin;
 	sensitivity = 0.019;
+  a_ = a;
+  b_ = b;
 }
 
 int ZMPT101B::calibrate() {
@@ -61,6 +63,6 @@ double ZMPT101B::getVoltageAC_custom(int counts) {
 		measurements_count++;
 	}
 
-	double Vrms = sqrt(Vsum / measurements_count) / ADC_SCALE * VREF * 327.579 + 1.34;
+	double Vrms = sqrt(Vsum / measurements_count) / ADC_SCALE * VREF * a_ + b_;
 	return Vrms;
 }

@@ -15,7 +15,7 @@
 #define U_min 20
 
 GStepper<STEPPER2WIRE> stepper(3200, step_, dir_);
-ZMPT101B voltageSensor(A3);
+ZMPT101B voltageSensor(A3, 327.579, 1.34);
 
 double U_set = 0.0;
 double U_current = 0.0;
@@ -114,22 +114,37 @@ void EthernetParser() {
                     client.println("<H1 style=\"color:green;text-align:center\">ARDUINO ETHERNET AC CONTROL</H1>");
                     client.println("<hr>");
                     client.println("<br>");
-                    //creating a link to redirect the user to turn on the light (создаем ссылку для включения светодиода)
-                    client.println("<H2 style=\"text-align:center\"><a href=\"/?set_U150\"\">Set Voltage 150</a><br></H2>");
+
+                    client.println("<p style=\"text-align: center\">");
+                    client.print("On this page you can request the current voltage ");
+                    client.println("</p>");
                     client.println("<H2 style=\"text-align:center\"><a href=\"/?get_U\"\">Get voltage</a><br></H2>");
+                    client.println("<br>");
+                    
+                    client.println("<p style=\"text-align: center\">");
+                    client.print("To set 150 V enter in the search bar or use curl http://");
+                    client.print(Ethernet.localIP());
+                    client.print("/?set_U150");
+                    client.println("</p>");
+                    
                     client.println("<br>");
                     client.println("</BODY>");
                     client.println("</HTML>");
-                   
-                    // control arduino pin with URL
+                    
                     
                     if(readString.indexOf("?set_U") > -1) {   
                       int data = GetVotageFromStr();
                       U_set = constrain(data, U_min, U_max);
+                      client.println("<p style=\"text-align: center\">");
+                      client.print("Voltage to set: ");
+                      client.println(U_set);
+                      client.println("</p>");
                       }
-                    if(readString.indexOf("?get_U") > -1) {   
+                    if(readString.indexOf("?get_U") > -1) {  
+                      client.println("<p style=\"text-align: center\">"); 
                       client.print("Current voltage: ");
                       client.println(U_current);
+                      client.println("</p>");
                       }
 
                     delay(10);
@@ -203,7 +218,7 @@ void loop() {
   
   stepper.tick();
 
-  if (millis() - tmr1 > 200) {
+  if (millis() - tmr1 > 50) {
     tmr1 = millis();
     
     if (digitalRead(A0) == 1 && U_set < U_max) {
