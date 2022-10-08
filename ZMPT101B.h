@@ -1,5 +1,4 @@
-#ifndef ZMPT101B_h
-#define ZMPT101B_h
+#pragma once
 
 #include <Arduino.h>
 
@@ -25,5 +24,3 @@ private:
   float a_ = 0.0;
   float b_ = 0.0;
 };
-
-#endif

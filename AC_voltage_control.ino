@@ -7,16 +7,10 @@
 #define U_min 20
 #define Manual_Step 5
 
-#include "ZMPT101B.h"
 #include <GyverStepper.h>
 #include <GyverOLED.h>
-
-//  Подключаем стандартную библиотеку для работы с Shield'ом по шине SPI
-#include <SPI.h>
-//  Подключаем стандартную библиотеку для работы с Ethernet
-#include <Ethernet.h>
-
 #include "EthernetSupport.h"
+#include "ZMPT101B.h"
 
 GStepper<STEPPER2WIRE> stepper(3200, step_, dir_, en_);
 GyverOLED<SSD1306_128x64, OLED_NO_BUFFER> oled;
