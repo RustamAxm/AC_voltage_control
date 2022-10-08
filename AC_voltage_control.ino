@@ -1,6 +1,7 @@
 
 #define step_ 2
 #define dir_ 5
+#define en_ A6
 #define EPSILON 2
 #define U_max 280
 #define U_min 20
@@ -8,14 +9,15 @@
 
 #include "ZMPT101B.h"
 #include <GyverStepper.h>
-//GStepper<STEPPER4WIRE> stepper(2048, 5, 3, 4, 2);
+#include <GyverOLED.h>
 
 //  Подключаем стандартную библиотеку для работы с Shield'ом по шине SPI
 #include "SPI.h"
 //  Подключаем стандартную библиотеку для работы с Ethernet
 #include "Ethernet.h"
 
-GStepper<STEPPER2WIRE> stepper(3200, step_, dir_);
+GStepper<STEPPER2WIRE> stepper(3200, step_, dir_, en_);
+GyverOLED<SSD1306_128x64, OLED_NO_BUFFER> oled;
 ZMPT101B voltageSensor(A3, 327.579, 1.34);
 
 EthernetServer server(80);
@@ -37,21 +39,32 @@ void setup() {
   stepper.setMaxSpeed(100);         // установка макс. скорости в шагах/сек
   stepper.setAcceleration(200);     // установка ускорения в шагах/сек/сек
   stepper.autoPower(true);
+  stepper.enable();
   
   pinMode(A0, INPUT_PULLUP);
   pinMode(A1, INPUT_PULLUP);
   pinMode(A3, INPUT);
+  pinMode(A6, OUTPUT);
   
   U_set = voltageSensor.getVoltageAC_custom();
   Serial.println("Done!");
 
   delay(100);
   ServerBegin();
+
+  oled.init();        // инициализация
+  oled.clear();
+  oled.setContrast(32);
+  delay(100);
 }
 
 void loop() {
-  U_current = voltageSensor.getVoltageAC_custom();
   stepper.tick();
+  
+  PrintIPOled();
+  PrintSetOled();
+  U_current = voltageSensor.getVoltageAC_custom();
+  
   
   DiscretStep();
  
