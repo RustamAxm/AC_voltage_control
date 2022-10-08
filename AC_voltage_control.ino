@@ -12,15 +12,20 @@
 #include <GyverOLED.h>
 
 //  Подключаем стандартную библиотеку для работы с Shield'ом по шине SPI
-#include "SPI.h"
+#include <SPI.h>
 //  Подключаем стандартную библиотеку для работы с Ethernet
-#include "Ethernet.h"
+#include <Ethernet.h>
+
+#include "EthernetSupport.h"
 
 GStepper<STEPPER2WIRE> stepper(3200, step_, dir_, en_);
 GyverOLED<SSD1306_128x64, OLED_NO_BUFFER> oled;
 ZMPT101B voltageSensor(A3, 327.579, 1.34);
 
 EthernetServer server(80);
+EthernetSupport sup(server);
+
+
 // Задаём MAC-адрес устройству. Главное, чтобы в сети не было уже зарегистрированно устройство с таким адресом
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 double U_set = 0.0;
@@ -50,7 +55,7 @@ void setup() {
   Serial.println("Done!");
 
   delay(100);
-  ServerBegin();
+  sup.ServerBegin(mac);
 
   oled.init();        // инициализация
   oled.clear();
@@ -65,11 +70,10 @@ void loop() {
   PrintSetOled();
   U_current = voltageSensor.getVoltageAC_custom();
   
-  
   DiscretStep();
  
   SerialParser();
-  EthernetParser(); 
+  U_set = sup.EthernetParser(U_set, U_current); 
  
   PrintData(); 
 }
