@@ -45,7 +45,7 @@ void setup() {
   pinMode(A3, INPUT);
   pinMode(A6, OUTPUT);
   
-  U_set = voltageSensor.getVoltageAC_custom();
+  U_set = constrain(voltageSensor.getVoltageAC_custom(), U_min, U_max);
   Serial.println("Done!");
 
   delay(100);
