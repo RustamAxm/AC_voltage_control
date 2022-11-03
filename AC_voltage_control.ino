@@ -25,8 +25,10 @@ byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 double U_set = 0.0;
 double U_current = 0.0;
 long int value = 0;
-static uint32_t tmr2;
+
 static uint32_t tmr1;
+static uint32_t tmr2;
+static uint32_t tmr3;
 
 #include "support_functions.h"
 
@@ -58,6 +60,12 @@ void setup() {
 }
 
 void loop() {
+  //refresh dhcp
+  if (millis() - tmr3 > 1000 * 36000) {
+    tmr3 = millis();
+    sup.ServerBegin(mac);
+  }
+
   stepper.tick();
   
   PrintIPOled();
